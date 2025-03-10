@@ -1,14 +1,18 @@
 {# templates/product/show.html.twig #}
 {% extends 'base.html.twig' %}
 
-{% block title %}{{ product.name }}{% endblock %}
+{#{% block title %}{{ product.name }}{% endblock %}#}
 
 {% block body %}
+    {% if product is not empty %}
     <h1>{{ product.name }}</h1>
     <p>Cena: {{ product.price }} PLN</p>
     <p>Opis: {{ product.description }}</p>
 
     <button id="add-to-cart-btn" class="btn btn-success">Dodaj do koszyka</button>
+    {% else %}
+    <p>Produkt nie istnieje.</p>
+    {% endif %}
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {

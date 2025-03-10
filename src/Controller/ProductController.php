@@ -2,9 +2,12 @@
 
 namespace App\Controller;
 
+use App\Entity\Product;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+
 
 class ProductController extends AbstractController
 {
@@ -12,13 +15,14 @@ class ProductController extends AbstractController
      * Lista produktów
      */
     #[Route('/products', name: 'app_products_list')]
-    public function list(): Response
+    public function list(EntityManagerInterface $entityManager): Response
     {
-        $products = [
-            ['id' => 1, 'name' => 'Smartphone X', 'price' => 1999],
-            ['id' => 2, 'name' => 'Laptop Pro', 'price' => 3999],
-            ['id' => 3, 'name' => 'Bezprzewodowe słuchawki', 'price' => 499],
-        ];
+        $qb = $entityManager->createQueryBuilder()
+            ->select('p')
+            ->from(Product::class, 'p')
+        ;
+        $query = $qb->getQuery();
+        $products = $query->getResult();
 
         return $this->render('product/list.html.twig', [
             'products' => $products
@@ -29,14 +33,9 @@ class ProductController extends AbstractController
      * Szczegóły produktu
      */
     #[Route('/products/{id}', name: 'app_products_show', requirements: ['id' => '\d+'])]
-    public function show(int $id): Response
+    public function show(int $id, EntityManagerInterface $entityManager): Response
     {
-        $product = [
-            'id' => $id,
-            'name' => 'Przykładowy produkt ' . $id,
-            'price' => 123,
-            'description' => 'Opis produktu o ID ' . $id,
-        ];
+        $product = $entityManager->getRepository(Product::class)->find($id);
 
         return $this->render('product/show.html.twig', [
             'product' => $product
