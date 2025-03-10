@@ -1,0 +1,22 @@
+{# templates/product/show.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ product.name }}{% endblock %}
+
+{% block body %}
+    <h1>{{ product.name }}</h1>
+    <p>Cena: {{ product.price }} PLN</p>
+    <p>Opis: {{ product.description }}</p>
+
+    <button id="add-to-cart-btn" class="btn btn-success">Dodaj do koszyka</button>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const addToCartBtn = document.getElementById('add-to-cart-btn');
+            addToCartBtn.addEventListener('click', () => {
+                // Tutaj w realnej aplikacji wyślesz żądanie AJAX lub przekierujesz do kontrolera koszyka
+                alert('Produkt dodany do koszyka!');
+            });
+        });
+    </script>
+{% endblock %}

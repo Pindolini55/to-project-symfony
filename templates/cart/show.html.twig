@@ -1,0 +1,43 @@
+{# templates/cart/show.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block title %}Twój koszyk{% endblock %}
+
+{% block body %}
+    <h1>Koszyk</h1>
+    {% if cartItems is empty %}
+        <p>Koszyk jest pusty.</p>
+    {% else %}
+        <table class="table">
+            <thead>
+            <tr>
+                <th>Produkt</th>
+                <th>Cena</th>
+                <th>Ilość</th>
+                <th>Razem</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% set total = 0 %}
+            {% for item in cartItems %}
+                {% set itemTotal = item.price * item.quantity %}
+                {% set total = total + itemTotal %}
+                <tr>
+                    <td>{{ item.name }}</td>
+                    <td>{{ item.price }} PLN</td>
+                    <td>{{ item.quantity }}</td>
+                    <td>{{ itemTotal }} PLN</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+            <tfoot>
+            <tr>
+                <td colspan="3" class="text-end"><strong>Suma:</strong></td>
+                <td><strong>{{ total }} PLN</strong></td>
+            </tr>
+            </tfoot>
+        </table>
+    {% endif %}
+
+    <button class="btn btn-primary">Przejdź do zamówienia</button>
+{% endblock %}
