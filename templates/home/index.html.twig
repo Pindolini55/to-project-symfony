@@ -1,12 +1,340 @@
-{# templates/home/index.html.twig #}
 {% extends 'base.html.twig' %}
 
-{% block title %}{{ title }}{% endblock %}
+{% block title %}Catalog - Home{% endblock %}
+
+{# Jeśli korzystasz z bloku stylesheets w base.html.twig,
+   możesz dodać poniższe style w nim lub w osobnym pliku CSS. #}
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        /* RESET PODSTAWOWYCH MARGINESÓW/PADDINGÓW (opcjonalnie) */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            color: #333;
+        }
+
+        /* ------------------------ NAVBAR ------------------------ */
+        .custom-navbar {
+            background-color: #023430; /* ciemna zieleń */
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem 2rem;
+        }
+        .custom-navbar .logo {
+            color: #fff;
+            font-size: 1.5rem;
+            font-weight: 700;
+            text-decoration: none;
+        }
+        .custom-navbar ul {
+            list-style: none;
+            display: flex;
+            gap: 2rem;
+        }
+        .custom-navbar li {
+            display: inline-block;
+        }
+        .custom-navbar a {
+            color: #fff;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        .custom-navbar a:hover {
+            color: #cfcfcf;
+        }
+        .icon-buttons {
+            display: flex;
+            gap: 1.5rem;
+        }
+        .icon-buttons a {
+            color: #fff;
+            text-decoration: none;
+            font-size: 1.2rem;
+        }
+
+        /* ------------------------ HERO SECTION ------------------------ */
+        .hero-section {
+            position: relative;
+            background-color: #0B4D3A; /* tło zbliżone do designu */
+            padding: 3rem 2rem;
+            overflow: hidden;
+        }
+        .hero-section .content-wrapper {
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 2;
+        }
+        /* Lewy slider indicator (1/5) */
+        .slide-indicator {
+            position: absolute;
+            top: 50%;
+            left: 2rem;
+            transform: translateY(-50%);
+            color: #fff;
+            font-weight: 600;
+            font-size: 1rem;
+        }
+        .hero-title {
+            color: #fff;
+            font-size: 3rem;
+            font-weight: 700;
+            line-height: 1.2;
+            margin-bottom: 1rem;
+        }
+        .hero-subtitle {
+            color: #fff;
+            font-size: 1rem;
+            margin-bottom: 2rem;
+        }
+        .hero-button {
+            background-color: #FFA200; /* jaskrawy pomarańczowy */
+            border: none;
+            color: #fff;
+            padding: 0.8rem 1.5rem;
+            font-size: 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            text-decoration: none;
+        }
+        .hero-button:hover {
+            background-color: #ff8c00;
+        }
+        /* Zdjęcia butów w hero */
+        .hero-images {
+            position: absolute;
+            top: 50%;
+            right: 5%;
+            transform: translateY(-50%);
+            width: 450px; /* dopasuj do potrzeb */
+            max-width: 100%;
+        }
+        .hero-images img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        /* Strzałka "następny slajd" */
+        .next-slide-btn {
+            position: absolute;
+            top: 50%;
+            right: 2rem;
+            transform: translateY(-50%);
+            font-size: 2rem;
+            color: #fff;
+            cursor: pointer;
+        }
+
+        /* ------------------------ POPULAR PRODUCTS ------------------------ */
+        .section {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 3rem 2rem;
+        }
+        .section h2 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+        }
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 2rem;
+        }
+        .section-header a {
+            text-decoration: none;
+            color: #0B4D3A;
+            font-weight: 600;
+        }
+        .product-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+        .product-card {
+            background-color: #fff;
+            border: 1px solid #eee;
+            border-radius: 6px;
+            padding: 1rem;
+            text-align: center;
+        }
+        .product-card img {
+            max-width: 100%;
+            height: auto;
+            margin-bottom: 1rem;
+        }
+        .product-name {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        .product-color {
+            font-size: 0.9rem;
+            color: #777;
+            margin-bottom: 0.5rem;
+        }
+        .product-price {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        .product-rating {
+            font-size: 0.9rem;
+            color: #FFB400;
+            margin-bottom: 1rem;
+        }
+        .add-to-cart-btn {
+            background-color: #0B4D3A;
+            color: #fff;
+            border: none;
+            padding: 0.6rem 1rem;
+            font-size: 0.9rem;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .add-to-cart-btn:hover {
+            background-color: #09422f;
+        }
+
+        /* ------------------------ BEST SHOES COLLECTION ------------------------ */
+        .best-shoes-section {
+            background-color: #f8f8f8;
+        }
+
+        /* ------------------------ FOOTER (opcjonalnie) ------------------------ */
+        .footer {
+            background-color: #023430;
+            color: #fff;
+            text-align: center;
+            padding: 2rem;
+        }
+
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 2rem;
+            }
+        }
+    </style>
+{% endblock %}
 
 {% block body %}
-    <h1>{{ title }}</h1>
-    <p>{{ subtitle }}</p>
 
-    <p>Zapraszamy do przeglądania naszych produktów!</p>
-    <a class="btn btn-primary" href="{{ path('app_products_list') }}">Zobacz produkty</a>
+    <!-- NAVBAR 1:1 z designu -->
+    <nav class="custom-navbar">
+        <a href="#" class="logo">CataLog</a>
+        <ul>
+            <li><a href="#">Home</a></li>
+            <li><a href="#">About</a></li>
+            <li><a href="#">Shoes Collection</a></li>
+            <li><a href="#">Shop</a></li>
+            <li><a href="#">FAQ</a></li>
+        </ul>
+        <div class="icon-buttons">
+            {# Tutaj możesz wstawić ikony wyszukiwania, usera, koszyka itp. #}
+            <a href="#"><i class="fa fa-search"></i></a>
+            <a href="#"><i class="fa fa-user"></i></a>
+            <a href="#"><i class="fa fa-shopping-cart"></i></a>
+        </div>
+    </nav>
+
+    <!-- HERO SECTION (DESIGN & HIGH QUALITY) -->
+    <section class="hero-section">
+        <div class="slide-indicator">1 / 5</div>
+        <div class="content-wrapper">
+            <h1 class="hero-title">DESIGN &amp; HIGH QUALITY</h1>
+            <p class="hero-subtitle">Product name and Model</p>
+            <a href="#" class="hero-button">View Products</a>
+        </div>
+        <!-- Obrazy butów w hero (zamiast tła) -->
+        <div class="hero-images">
+            {# Wstaw tu swoje obrazy butów, np. z przeźroczystym tłem #}
+            <img src="{{ asset('images/hero-shoes.png') }}" alt="Hero Shoes">
+        </div>
+        <!-- Strzałka do następnego slajdu (placeholder) -->
+        <div class="next-slide-btn">
+            <span>&#10095;</span>
+        </div>
+    </section>
+
+    <!-- OUR POPULAR PRODUCTS -->
+    <section class="section">
+        <div class="section-header">
+            <h2>Our Popular Products</h2>
+            <a href="#">Explore More</a>
+        </div>
+        <div class="product-cards">
+            <!-- KARTA 1 -->
+            <div class="product-card">
+                <img src="{{ asset('images/nike-dunk-low-retro.png') }}" alt="Nike Dunk Low Retro">
+                <div class="product-name">Nike Dunk Low Retro</div>
+                <div class="product-color">1 COLOR</div>
+                <div class="product-price">$134.98</div>
+                <div class="product-rating">4.3 (3.2k)</div>
+                <button class="add-to-cart-btn">Add to Cart</button>
+            </div>
+            <!-- KARTA 2 -->
+            <div class="product-card">
+                <img src="{{ asset('images/nike-air-402.png') }}" alt="Nike Air 402">
+                <div class="product-name">Nike Air 402</div>
+                <div class="product-color">1 COLOR</div>
+                <div class="product-price">$134.98</div>
+                <div class="product-rating">4.3 (3.2k)</div>
+                <button class="add-to-cart-btn">Add to Cart</button>
+            </div>
+            <!-- KARTA 3 -->
+            <div class="product-card">
+                <img src="{{ asset('images/nike-03-air-force.png') }}" alt="Nike 03 Air Force">
+                <div class="product-name">Nike 03 Air Force</div>
+                <div class="product-color">1 COLOR</div>
+                <div class="product-price">$134.98</div>
+                <div class="product-rating">4.3 (3.2k)</div>
+                <button class="add-to-cart-btn">Add to Cart</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- BEST SHOES COLLECTION -->
+    <section class="section best-shoes-section">
+        <div class="section-header">
+            <h2>Best Shoes Collection</h2>
+            <a href="#">Explore More</a>
+        </div>
+        <div class="product-cards">
+            <!-- Przykładowe 3 kolejne karty (możesz zmienić nazwy, obrazki itd.) -->
+            <div class="product-card">
+                <img src="{{ asset('images/nike-dunk-low-retro.png') }}" alt="Nike Dunk Low Retro">
+                <div class="product-name">Nike Dunk Low Retro</div>
+                <div class="product-color">1 COLOR</div>
+                <div class="product-price">$134.98</div>
+                <div class="product-rating">4.3 (3.2k)</div>
+                <button class="add-to-cart-btn">Add to Cart</button>
+            </div>
+            <div class="product-card">
+                <img src="{{ asset('images/nike-air-402.png') }}" alt="Nike Air 402">
+                <div class="product-name">Nike Air 402</div>
+                <div class="product-color">1 COLOR</div>
+                <div class="product-price">$134.98</div>
+                <div class="product-rating">4.3 (3.2k)</div>
+                <button class="add-to-cart-btn">Add to Cart</button>
+            </div>
+            <div class="product-card">
+                <img src="{{ asset('images/nike-03-air-force.png') }}" alt="Nike 03 Air Force">
+                <div class="product-name">Nike 03 Air Force</div>
+                <div class="product-color">1 COLOR</div>
+                <div class="product-price">$134.98</div>
+                <div class="product-rating">4.3 (3.2k)</div>
+                <button class="add-to-cart-btn">Add to Cart</button>
+            </div>
+        </div>
+    </section>
+
+
 {% endblock %}

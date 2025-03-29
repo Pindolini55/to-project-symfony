@@ -5,7 +5,7 @@ namespace App\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity]
-#[ORM\Table(name: "product")]
+#[ORM\Table(name: "wp_product")]
 class Product
 {
     #[ORM\Id]
@@ -15,6 +15,9 @@ class Product
 
     #[ORM\Column(type: "string", length: 255)]
     private ?string $name = null;
+
+    #[ORM\Column(type: "string", length: 255, nullable: true)]
+    private ?string $imageUrl = null;
 
     #[ORM\Column(type: "decimal", precision: 10, scale: 2)]
     private ?string $price = null;
@@ -61,4 +64,15 @@ class Product
         $this->description = $description;
         return $this;
     }
+
+    public function getImageUrl(): ?string
+    {
+        return $this->imageUrl;
+    }
+
+    public function setImageUrl(?string $imageUrl): void
+    {
+        $this->imageUrl = $imageUrl;
+    }
+
 }
