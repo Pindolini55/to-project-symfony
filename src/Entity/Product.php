@@ -14,16 +14,19 @@ class Product
     private ?int $id = null;
 
     #[ORM\Column(type: "string", length: 255)]
-    private ?string $name = null;
+    public ?string $name = null;
 
     #[ORM\Column(type: "string", length: 255, nullable: true)]
     private ?string $imageUrl = null;
 
     #[ORM\Column(type: "decimal", precision: 10, scale: 2)]
-    private ?string $price = null;
+    public ?string $price = null;
 
     #[ORM\Column(type: "text", nullable: true)]
-    private ?string $description = null;
+    public ?string $description = null;
+
+    #[ORM\Column(type: "array", nullable: true)]
+    public ?array $colors = null;
 
     // Gettery i settery
 
@@ -73,6 +76,16 @@ class Product
     public function setImageUrl(?string $imageUrl): void
     {
         $this->imageUrl = $imageUrl;
+    }
+
+    public function getColors(): ?array
+    {
+        return $this->colors;
+    }
+
+    public function setColors(?array $colors): void
+    {
+        $this->colors = $colors;
     }
 
 }

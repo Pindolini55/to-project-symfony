@@ -48,6 +48,7 @@
         }
         .custom-navbar a:hover {
             color: #878787;
+            text-decoration: underline;
         }
 
         /* ------------------------ POPULAR PRODUCTS ------------------------ */
@@ -78,8 +79,9 @@
             font-weight: 600;
         }
         .product-card {
-            background-color: #fff;
-            border: 1px solid #eee;
+            background-color: #f1f1f1;
+            border: 0;
+            /*border: 1px solid #eee;*/
             border-radius: 15px;
             padding: 0 0 15px 0;
             max-width: 350px;
@@ -89,11 +91,12 @@
             width: 60%;
             height: auto;
             margin-bottom: 1rem;
-            border-radius: 5px;
+            border-radius: 15px;
         }
         .product-name {
             margin-top: 10px;
             font-weight: 600;
+            font-size: 1.15rem;
             margin-bottom: 0.5rem;
         }
         .product-colors {
@@ -106,31 +109,58 @@
             font-size: 0.9rem;
             color: #777;
             margin-bottom: 0.5rem;
+            border-radius: 2px;
             width: 25px;
             height: 25px;
         }
         .product-price {
-            font-size: 1rem;
-            font-weight: 700;
-            margin-bottom: 0.5rem;
+            font-size: 1.15rem;
+            margin-top: 0.5rem;
+            margin-left: 1.35rem;
+            font-weight: bold;
+            letter-spacing: -0.05rem;
         }
         .product-rating {
-            font-size: 0.9rem;
-            color: #FFB400;
-            margin-bottom: 1rem;
+            font-size: 0.95rem;
+            color: black;
+            font-weight: bold;
+            margin-top: 0.6rem;
+            margin-left: 1.05rem;
         }
         .add-to-cart-btn {
-            background-color: #0B4D3A;
-            color: #fff;
-            border: none;
-            padding: 0.6rem 1rem;
+            background-color: #f1f1f1;
+            color: black;
+            border: 2px solid black;
+            padding: 0.20rem 0.6rem;
+            margin-top: 0.35rem;
             font-size: 0.9rem;
-            border-radius: 4px;
+            border-radius: 55px;
             cursor: pointer;
-            margin-top: 15px;
+            font-weight: bold;
+            margin-left: auto;
+            margin-right: 0.5rem;
+        }
+        .explore-more-button {
+            background-color: #ffffff;
+            color: black !important;
+            border: 2px solid black;
+            padding: 0.35rem 1.25rem;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: bold;
+        }
+        .explore-more-button a {
+            text-decoration: none;
+            color: black !important;
+        }
+        .explore-more-button:hover {
+            background-color: #efefef;
+            transform: scale(1.01);
+            transition: transform 0.55s ease;
         }
         .add-to-cart-btn:hover {
-            background-color: #09422f;
+            background-color: #dcdcdc;
         }
 
         /* ------------------------ BEST SHOES COLLECTION ------------------------ */
@@ -179,6 +209,10 @@
             width: 65%;
             border-radius: 25px;
             max-height: 555px;
+        }
+        .header-image-container img:hover {
+            transform: scale(1.02);
+            transition: transform 0.55s ease;
         }
     </style>
 {% endblock %}
@@ -230,14 +264,16 @@
     <section class="section">
         <div class="section-header">
             <h2>Our Popular Products</h2>
-            <a href="#">Explore More</a>
+            <button class="explore-more-button"><a href="#">Explore More</a><i style="margin-left: 0.55rem; font-size: 1.45rem;" class="mdi mdi-arrow-right"></i></button>
         </div>
         <div class="product-cards">
             {% for product in popularProducts %}
                 <div class="product-card">
                     <div class="product-name">{{ product.name }}</div>
-                    {% if product.imageUrl is defined %}
+                    {% if product.imageUrl is not null %}
                         <img src="{{ asset(product.imageUrl) }}" alt="{{ product.name }}">
+                    {% else %}
+                        <img src="{{ asset('images/defaultImage.png') }}" alt="Default Product Image">
                     {% endif %}
                     {% if product.colors %}
                         <div class="product-colors">
@@ -248,32 +284,13 @@
                             {% endfor %}
                         </div>
                     {% endif %}
-                    <div class="product-price">{{ product.price }}</div>
-                    <button class="add-to-cart-btn">Add to Cart</button>
+                    <div style="display: flex;">
+                        <span class="product-price">${{ product.price }}</span>
+                        <div class="product-rating"><i style="color: #FFB400; margin-right: 2px;" class="mdi mdi-star"></i>{{ product.rating }}</div>
+                        <button class="add-to-cart-btn">Add to Cart</button>
+                    </div>
                 </div>
             {% endfor %}
         </div>
     </section>
-
-    <!-- BEST SHOES COLLECTION -->
-{#    <section class="section best-shoes-section">#}
-{#        <div class="section-header">#}
-{#            <h2>Best Shoes Collection</h2>#}
-{#            <a href="#">Explore More</a>#}
-{#        </div>#}
-{#        <div class="product-cards">#}
-{#            {% for product in bestCollection %}#}
-{#                <div class="product-card">#}
-{#                    {% if product.image is defined %}#}
-{#                        <img src="{{ asset(product.image) }}" alt="{{ product.name }}">#}
-{#                    {% endif %}#}
-{#                    <div class="product-name">{{ product.name }}</div>#}
-{#                    <div class="product-color">{{ product.color }}</div>#}
-{#                    <div class="product-price">{{ product.price }}</div>#}
-{#                    <div class="product-rating">{{ product.rating }}</div>#}
-{#                    <button class="add-to-cart-btn">Add to Cart</button>#}
-{#                </div>#}
-{#            {% endfor %}#}
-{#        </div>#}
-{#    </section>#}
 {% endblock %}

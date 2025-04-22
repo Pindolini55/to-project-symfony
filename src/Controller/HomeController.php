@@ -2,7 +2,7 @@
 
 namespace App\Controller;
 
-use App\Entity\Product;
+use App\Entity\ProductOpinion;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -13,16 +13,25 @@ class HomeController extends AbstractController
     #[Route('/', name: 'app_home')]
     public function index(EntityManagerInterface $entityManager): Response
     {
-//        $qb = $entityManager->createQueryBuilder()
-//            ->select('p')
-//            ->from(Product::class, 'p')
-//        ;
-//        $query = $qb->getQuery();
-//        $products = $query->getResult();
-//
-//        return $this->render('home/index.html.twig', [
-//            'products' => $products
-//        ]);
+        $qb = $entityManager->createQueryBuilder();
+        $qb->select('p.id as idProduct, p.name, p.price, p.description, p.imageUrl, p.colors,
+            COUNT(po.id) AS opinionsCount, AVG(po.value) AS averageRating')
+            ->from(ProductOpinion::class, 'po')
+            ->leftJoin('po.idProduct', 'p')
+            ->groupBy('po.idProduct')
+            ->orderBy('opinionsCount', 'DESC')
+            ->setMaxResults(3);
+
+        $query = $qb->getQuery();
+        $popularProducts = $query->getResult();
+
+        foreach ($popularProducts as $key => $popularProduct) {
+            $popularProducts[$key]['rating'] = number_format($popularProduct['averageRating'], 1, '.', '') . ' (' . $popularProduct['opinionsCount'] . ')';
+        }
+
+        return $this->render('home/index.html.twig', [
+            'popularProducts' => $popularProducts
+        ]);
 
 
 
