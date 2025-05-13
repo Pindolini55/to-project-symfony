@@ -19,7 +19,7 @@ class ProductOpinion
     #[ORM\Column(type: "text", nullable: true)]
     public ?string $description = null;
 
-    #[ORM\ManyToOne(targetEntity: Product::class, inversedBy: 'opinions')]
+    #[ORM\ManyToOne(targetEntity: Product::class)]
     #[ORM\JoinColumn(name: 'id_product', referencedColumnName: 'id', nullable: false)]
     private ?Product $idProduct = null;
 

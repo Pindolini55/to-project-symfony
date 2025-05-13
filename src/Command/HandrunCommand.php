@@ -26,7 +26,8 @@ class HandrunCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $output->writeln('<info>Rozpoczęcie operacji ręcznych...</info>');
-        $this->handrunFunctions->addProductColors($output);
+//        $this->handrunFunctions->addProductColors($output);
+        $this->handrunFunctions->addProducts($output, 30,true);
         $output->writeln('<info>Zakończono.</info>');
 
         return Command::SUCCESS;

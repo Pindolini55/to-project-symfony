@@ -14,7 +14,10 @@ class Product
     private ?int $id = null;
 
     #[ORM\Column(type: "string", length: 255)]
-    public ?string $name = null;
+    public ?string $brand = null;
+
+    #[ORM\Column(type: "string", length: 255)]
+    public ?string $model = null;
 
     #[ORM\Column(type: "string", length: 255, nullable: true)]
     private ?string $imageUrl = null;
@@ -28,6 +31,9 @@ class Product
     #[ORM\Column(type: "array", nullable: true)]
     public ?array $colors = null;
 
+    #[ORM\Column(type: "array", nullable: true)]
+    public ?array $sizes = null;
+
     // Gettery i settery
 
     public function getId(): ?int
@@ -35,15 +41,24 @@ class Product
         return $this->id;
     }
 
-    public function getName(): ?string
+    public function getBrand(): ?string
     {
-        return $this->name;
+        return $this->brand;
     }
 
-    public function setName(string $name): self
+    public function setBrand(?string $brand): void
     {
-        $this->name = $name;
-        return $this;
+        $this->brand = $brand;
+    }
+
+    public function getModel(): ?string
+    {
+        return $this->model;
+    }
+
+    public function setModel(?string $model): void
+    {
+        $this->model = $model;
     }
 
     public function getPrice(): ?string
@@ -87,5 +102,16 @@ class Product
     {
         $this->colors = $colors;
     }
+
+    public function getSizes(): ?array
+    {
+        return $this->sizes;
+    }
+
+    public function setSizes(?array $sizes): void
+    {
+        $this->sizes = $sizes;
+    }
+
 
 }

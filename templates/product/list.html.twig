@@ -3,30 +3,141 @@
 
 {% block title %}Lista produktów{% endblock %}
 
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Verdana, sans-serif;
+            color: #333;
+        }
+        .section {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 3rem 2rem;
+        }
+        .section h2 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+        }
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 2rem;
+        }
+        .product-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px
+        }
+        .section-header a {
+            text-decoration: none;
+            color: #0B4D3A;
+            font-weight: 600;
+        }
+        .product-card {
+            background-color: #f1f1f1;
+            border: 0;
+            /*border: 1px solid #eee;*/
+            border-radius: 15px;
+            padding: 0 0 15px 0;
+            max-width: 350px;
+            text-align: center;
+        }
+        .product-card img {
+            width: 60%;
+            height: auto;
+            margin-bottom: 1rem;
+            border-radius: 15px;
+        }
+        .product-name {
+            margin-top: 10px;
+            font-weight: 600;
+            font-size: 1.15rem;
+            margin-bottom: 0.5rem;
+        }
+        .product-colors {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        .product-color {
+            font-size: 0.9rem;
+            color: #777;
+            margin-bottom: 0.5rem;
+            border-radius: 2px;
+            width: 25px;
+            height: 25px;
+        }
+        .product-price {
+            font-size: 1.15rem;
+            margin-top: 0.5rem;
+            margin-left: 1.35rem;
+            font-weight: bold;
+            letter-spacing: -0.05rem;
+        }
+        .product-rating {
+            font-size: 0.95rem;
+            color: black;
+            font-weight: bold;
+            margin-top: 0.6rem;
+            margin-left: 1.05rem;
+        }
+        .add-to-cart-btn {
+            background-color: #f1f1f1;
+            color: black;
+            border: 2px solid black;
+            padding: 0.20rem 0.6rem;
+            margin-top: 0.35rem;
+            font-size: 0.9rem;
+            border-radius: 55px;
+            cursor: pointer;
+            font-weight: bold;
+            margin-left: auto;
+            margin-right: 0.5rem;
+        }
+    </style>
+
+{% endblock %}
+
 {% block body %}
-    <section class="py-5">
-        <div class="container">
-            <h1 class="mb-4 fw-bold">Nasze produkty</h1>
-            <div class="row">
-                {% for product in products %}
-                    <div class="col-md-4 mb-4">
-                        <div class="card h-100">
-                            <img src="{{ product.imageUrl }}" class="card-img-top" alt="{{ product.name }}">
-                            <div class="card-body">
-                                <h5 class="card-title">{{ product.name }}</h5>
-                                <p class="card-text">
-                                    Cena: <strong>{{ product.price }} PLN</strong><br>
-                                    <small class="text-muted">Ocena: {{ product.rating|default(4.5) }}★</small>
-                                </p>
-                                <div class="d-grid">
-                                    <a href="{{ path('app_products_show', { id: product.id }) }}" class="btn btn-info mb-2">Szczegóły</a>
-                                    <button class="btn btn-success">Dodaj do koszyka</button>
+    <section class="section">
+        <div class="section-header">
+            <h2>Products</h2>
+        </div>
+        <div class="product-cards">
+            {% for product in products %}
+                <div class="product-card">
+                    <div class="product-name">{{ product.brand }} {{ product.model }}</div>
+                    {% if product.imageUrl is not null %}
+                        <img src="{{ asset(product.imageUrl) }}" alt="{{ product.brand }} {{ product.model }}">
+                    {% else %}
+                        <img src="{{ asset('images/defaultImage.png') }}" alt="Default Product Image">
+                    {% endif %}
+                    {% if product.colors %}
+                        <div class="product-colors">
+                            {% for color in product.colors %}
+                                <div class="product-color" style="background-color: {{ color }}">
+                                    &nbsp;
                                 </div>
-                            </div>
+                            {% endfor %}
                         </div>
+                    {% endif %}
+                    <div style="display: flex;">
+                        <span class="product-price">${{ product.price }}</span>
+                        <div class="product-rating"><i style="color: #FFB400; margin-right: 2px;" class="mdi mdi-star"></i>{{ product.rating }}</div>
+                        <button class="add-to-cart-btn" data-product-id="{{ product.id }}" data-product-name="{{ product.brand }} {{ product.model }}" data-product-price="{{ product.price }}">Add to Cart</button>
                     </div>
-                {% endfor %}
-            </div>
+                </div>
+            {% endfor %}
         </div>
     </section>
 {% endblock %}
