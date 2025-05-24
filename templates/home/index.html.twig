@@ -16,41 +16,6 @@
             color: #333;
         }
 
-        /* ------------------------ NAVBAR ------------------------ */
-        .custom-navbar {
-            background-color: #023430; /* ciemna zieleń */
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 1rem 2rem;
-        }
-        .custom-navbar .logo {
-            color: #fff;
-            font-size: 1.5rem;
-            font-weight: 700;
-            text-decoration: none;
-        }
-        .custom-navbar .logo:hover {
-            transform: scale(1.02);
-        }
-        .custom-navbar ul {
-            list-style: none;
-            display: flex;
-            gap: 2rem;
-        }
-        .custom-navbar li {
-            display: inline-block;
-        }
-        .custom-navbar a {
-            color: #000000;
-            text-decoration: none;
-            font-weight: 500;
-        }
-        .custom-navbar a:hover {
-            color: #878787;
-            text-decoration: underline;
-        }
-
         /* ------------------------ POPULAR PRODUCTS ------------------------ */
         .section {
             max-width: 1200px;
@@ -161,6 +126,11 @@
         }
         .add-to-cart-btn:hover {
             background-color: #dcdcdc;
+            transition: all 0.25s ease;
+            transform: scale(1.05);
+        }
+        .add-to-cart-btn:active {
+            transform: scale(0.95);
         }
 
         /* ------------------------ BEST SHOES COLLECTION ------------------------ */
@@ -168,23 +138,6 @@
             background-color: #f8f8f8;
         }
 
-        .header-container {
-            background-color: #023430;
-            width: 100%;
-            height: 40%;
-        }
-
-        .bar-container {
-            margin-top: 15px;
-            background-color: #e3e3e3;
-            padding: 16px 20px 16px 20px;
-            border-radius: 25px;
-        }
-        .bar-container-text {
-            color: black;
-            font-weight: bold;
-            font-size: 16px;
-        }
         .bar-container-text i {
             font-size: 24px;
         }
@@ -218,46 +171,8 @@
 {% endblock %}
 
 {% block body %}
-    <!-- NAVBAR -->
-    <div class="header-container">
-        <nav class="custom-navbar">
-            <a href="#" class="logo"><img width="14%" style="margin-right: 10px; margin-bottom: 5px;" src="{{ asset('images/SymfonyIcon.png') }}" alt="HomePageTopImage">SymfonyShop</a>
-            <ul class="bar-container">
-                <li class="bar-container-text">
-                    <a href="#">Home</a>
-                </li>
-                <li class="bar-container-text">
-                    <a href="#">About</a>
-                </li>
-                <li class="bar-container-text">
-                    <a href="/products">Shoes Collection</a>
-                </li>
-                <li class="bar-container-text">
-                    <a href="#">Shop</a>
-                </li>
-                <li class="bar-container-text">
-                    <a href="#">FAQ</a>
-                </li>
-            </ul>
-            <ul class="bar-container-icons">
-                <li class="bar-container-text">
-                    <a href="#"><i class="mdi mdi-magnify"></i></a>
-                </li>
-                <li class="bar-container-text">
-                    <a href="#"><i class="mdi mdi-heart-outline"></i></a>
-                </li>
-                <li class="bar-container-text">
-                    <a href="#"><i class="mdi mdi-cart-outline" id="cart-icon"></i><span id="cart-count" style="background-color: red; color: white; border-radius: 50%; padding: 2px 8px; font-size: 0.8rem; position: relative; top: -10px; left: -5px;">0</span></a>
-                </li>
-                <li class="bar-container-text">
-                    <a href="#"><i class="mdi mdi-account-circle"></i></a>
-                </li>
-            </ul>
-        </nav>
-        <div class="header-image-container">
-            <img src="{{ asset('images/HomePageTopImage.png') }}" alt="HomePageTopImage">
-        </div>
-
+    <div class="header-image-container">
+        <img src="{{ asset('images/HomePageTopImage.png') }}" alt="HomePageTopImage">
     </div>
 
     <!-- OUR POPULAR PRODUCTS -->
@@ -296,50 +211,50 @@
 {% endblock %}
 
 {% block javascripts %}
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const cartIcon = document.getElementById('cart-icon');
-            const cartCount = document.getElementById('cart-count');
-            const addToCartButtons = document.querySelectorAll('.add-to-cart-btn');
+{#    <script>#}
+{#        document.addEventListener('DOMContentLoaded', function () {#}
+{#            const cartIcon = document.getElementById('cart-icon');#}
+{#            const cartCount = document.getElementById('cart-count');#}
+{#            const addToCartButtons = document.querySelectorAll('.add-to-cart-btn');#}
 
-            function getCart() {
-                const cart = localStorage.getItem('cart');
-                return cart ? JSON.parse(cart) : [];
-            }
+{#            function getCart() {#}
+{#                const cart = localStorage.getItem('cart');#}
+{#                return cart ? JSON.parse(cart) : [];#}
+{#            }#}
 
-            function saveCart(cart) {
-                localStorage.setItem('cart', JSON.stringify(cart));
-            }
+{#            function saveCart(cart) {#}
+{#                localStorage.setItem('cart', JSON.stringify(cart));#}
+{#            }#}
 
-            function updateCartCount() {
-                const cart = getCart();
-                cartCount.textContent = cart.length;
-            }
+{#            function updateCartCount() {#}
+{#                const cart = getCart();#}
+{#                cartCount.textContent = cart.length;#}
+{#            }#}
 
-            addToCartButtons.forEach(button => {
-                button.addEventListener('click', function () {
-                    const productId = this.dataset.productId;
-                    const productName = this.dataset.productName;
-                    const productPrice = this.dataset.productPrice;
+{#            addToCartButtons.forEach(button => {#}
+{#                button.addEventListener('click', function () {#}
+{#                    const productId = this.dataset.productId;#}
+{#                    const productName = this.dataset.productName;#}
+{#                    const productPrice = this.dataset.productPrice;#}
 
-                    let cart = getCart();
+{#                    let cart = getCart();#}
 
-                    if (cart.some(item => item.id === productId)) {
-                        alert('Produkt znajduję się juz w koszyku!');
-                        return;
-                    }
-                    cart.push({
-                        id: productId,
-                        name: productName,
-                        price: productPrice
-                    });
-                    saveCart(cart);
-                    updateCartCount();
-                    showSnackbar(`Produkt ${productName} został dodany do koszyka!`);
-                });
-            });
+{#                    if (cart.some(item => item.id === productId)) {#}
+{#                        alert('Produkt znajduję się juz w koszyku!');#}
+{#                        return;#}
+{#                    }#}
+{#                    cart.push({#}
+{#                        id: productId,#}
+{#                        name: productName,#}
+{#                        price: productPrice#}
+{#                    });#}
+{#                    saveCart(cart);#}
+{#                    updateCartCount();#}
+{#                    showSnackbar(`Produkt ${productName} został dodany do koszyka!`);#}
+{#                });#}
+{#            });#}
 
-            updateCartCount();
-        });
-    </script>
+{#            updateCartCount();#}
+{#        });#}
+{#    </script>#}
 {% endblock %}

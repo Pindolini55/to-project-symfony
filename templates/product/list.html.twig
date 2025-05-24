@@ -17,7 +17,7 @@
             color: #333;
         }
         .section {
-            max-width: 1200px;
+            max-width: 80%;
             margin: 0 auto;
             padding: 3rem 2rem;
         }
@@ -104,6 +104,37 @@
             margin-left: auto;
             margin-right: 0.5rem;
         }
+        input[type="checkbox"] {
+            accent-color: #023430;
+            width: 22px;
+            height: 22px;
+            cursor: pointer;
+        }
+        label:hover input[type="checkbox"] {
+            transform: scale(1.05);
+        }
+        label:hover {
+            color: #656565;
+        }
+        .add-to-cart-btn {
+            background-color: #f1f1f1;
+            color: black;
+            border: 2px solid black;
+            padding: 0.20rem 0.6rem;
+            margin-top: 0.35rem;
+            font-size: 0.9rem;
+            border-radius: 55px;
+            cursor: pointer;
+            font-weight: bold;
+            margin-left: auto;
+            margin-right: 0.5rem;
+        }
+        .add-to-cart-btn:hover {
+            background-color: #dcdcdc;
+            transition: all 0.25s ease;
+            transform: scale(1.05);
+        }
+
     </style>
 
 {% endblock %}
@@ -111,33 +142,97 @@
 {% block body %}
     <section class="section">
         <div class="section-header">
-            <h2>Products</h2>
+            <h2>Products <span style="font-size: 20px;">({{ products|length }})</span></h2>
+            <form method="get" style="display: flex; align-items: center; gap: 1rem;">
+                <label for="sort">Sortuj:</label>
+                <select name="sort" id="sort" class="form-select">
+                    <option value="">-- wybierz --</option>
+                    <option value="price_asc" {{ app.request.get('sort') == 'price_asc' ? 'selected' : '' }}>Cena rosnąco</option>
+                    <option value="price_desc" {{ app.request.get('sort') == 'price_desc' ? 'selected' : '' }}>Cena malejąco</option>
+                    <option value="popular_desc" {{ app.request.get('sort') == 'rating_desc' ? 'selected' : '' }}>Popularność</option>
+                    <option value="rating_desc" {{ app.request.get('sort') == 'rating_desc' ? 'selected' : '' }}>Najwyższa ocena</option>
+                </select>
+                <button type="submit" class="btn btn-dark">Sortuj</button>
+            </form>
         </div>
-        <div class="product-cards">
-            {% for product in products %}
-                <div class="product-card">
-                    <div class="product-name">{{ product.brand }} {{ product.model }}</div>
-                    {% if product.imageUrl is not null %}
-                        <img src="{{ asset(product.imageUrl) }}" alt="{{ product.brand }} {{ product.model }}">
-                    {% else %}
-                        <img src="{{ asset('images/defaultImage.png') }}" alt="Default Product Image">
-                    {% endif %}
-                    {% if product.colors %}
-                        <div class="product-colors">
-                            {% for color in product.colors %}
-                                <div class="product-color" style="background-color: {{ color }}">
-                                    &nbsp;
-                                </div>
+
+        <div style="display: flex; gap: 2rem;">
+            <aside style="width: 250px;">
+                <h4>Filtry</h4>
+                <form method="get" style="display: flex; flex-direction: column; gap: 1rem;">
+                    <div>
+                        <label for="minPrice">Cena od:</label>
+                        <input type="number" name="minPrice" id="minPrice" class="form-control" value="{{ app.request.get('minPrice') }}">
+                    </div>
+
+                    <div>
+                        <label for="maxPrice">Cena do:</label>
+                        <input type="number" name="maxPrice" id="maxPrice" class="form-control" value="{{ app.request.get('maxPrice') }}">
+                    </div>
+
+                    <div>
+                        <p style="margin: 0; font-weight: bold;">Rozmiary:</p>
+                        <div style="margin-top: 10px; display: flex; flex-wrap: wrap; gap: 0.5rem;">
+                            {% for rozmiar in ['30','31','32','33','34','35','36', '37', '38', '39', '40', '41', '42', '43', '44', '45', '46'] %}
+                                <label style="display: flex; align-items: center; gap: 0.3rem; cursor: pointer;">
+                                    <input type="checkbox" name="size[]" value="{{ rozmiar }}"
+                                            {% if app.request.get('size') is iterable and rozmiar in app.request.get('size') %}
+                                    checked
+                                            {% endif %}>
+                                    {{ rozmiar }}
+                                </label>
                             {% endfor %}
                         </div>
-                    {% endif %}
-                    <div style="display: flex;">
-                        <span class="product-price">${{ product.price }}</span>
-                        <div class="product-rating"><i style="color: #FFB400; margin-right: 2px;" class="mdi mdi-star"></i>{{ product.rating }}</div>
-                        <button class="add-to-cart-btn" data-product-id="{{ product.id }}" data-product-name="{{ product.brand }} {{ product.model }}" data-product-price="{{ product.price }}">Add to Cart</button>
                     </div>
-                </div>
-            {% endfor %}
+
+                    <div>
+                        <p style="margin: 0; font-weight: bold;">Kolory:</p>
+                        <div style="margin-top: 10px; display: flex; flex-wrap: wrap; gap: 0.5rem;">
+                            {% for kolor in ['black', 'green', 'white', 'blue', 'brown', 'red', 'yellow', 'purple', 'pink', 'orange', 'beige', 'navy', 'teal', 'burgundy'] %}
+                                <label style="display: flex; align-items: center; gap: 0.3rem; cursor: pointer;">
+                                    <input type="checkbox" name="color[]" value="{{ kolor }}"
+                                            {% if app.request.get('color') is iterable and kolor in app.request.get('color') %}
+                                    checked
+                                            {% endif %}>
+                                    {{ kolor|capitalize }}
+                                </label>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">Filtruj</button>
+                </form>
+            </aside>
+
+            <div class="product-cards" style="flex: 1; display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem;">
+                {% for product in products %}
+                    <div class="product-card">
+                        <div class="product-name">{{ product.brand }} {{ product.model }}</div>
+                        {% if product.imageUrl %}
+                            <img src="{{ asset(product.imageUrl) }}" alt="{{ product.brand }} {{ product.model }}">
+                        {% else %}
+                            <img src="{{ asset('images/defaultImage.png') }}" alt="Default Product Image">
+                        {% endif %}
+                        {% if product.colors %}
+                            <div class="product-colors">
+                                {% for color in product.colors %}
+                                    <div class="product-color" style="background-color: {{ color }}">&nbsp;</div>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                        <div style="display: flex;">
+                            <span class="product-price">${{ product.price }}</span>
+                            <div class="product-rating"><i style="color: #FFB400; margin-right: 2px;" class="mdi mdi-star"></i>{{ product.rating }}</div>
+                            <button class="add-to-cart-btn"
+                                    data-product-id="{{ product.id }}"
+                                    data-product-name="{{ product.brand }} {{ product.model }}"
+                                    data-product-price="{{ product.price }}">
+                                Add to Cart
+                            </button>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
         </div>
     </section>
 {% endblock %}
