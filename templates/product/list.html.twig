@@ -134,9 +134,139 @@
             transition: all 0.25s ease;
             transform: scale(1.05);
         }
+        .product-img:hover {
+            transition: all 0.25s ease;
+            transform: scale(1.05);
+        }
+
+        .product-image-wrapper {
+            position: relative;
+            display: inline-block;
+            width: 100%;
+            height: auto;
+            overflow: hidden;
+        }
+
+        .product-img {
+            width: 100%;
+            margin-left: auto;
+            margin-right: auto;
+            height: auto;
+            transition: transform 0.25s ease;
+            display: block;
+            border-radius: 15px;
+        }
+
+        .image-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            width: 62%;
+            height: 160px;
+            margin-left: auto;
+            margin-right: auto;
+            background: rgba(0, 0, 0, 0.5);
+            color: white;
+            font-weight: bold;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            border-radius: 15px;
+            pointer-events: none; /* zapobiega klikaniu w overlay */
+        }
+
+        .image-overlay i {
+            font-size: 2rem;
+            margin-bottom: 0.1rem;
+        }
+
+        .product-image-wrapper:hover .image-overlay {
+            transition: opacity 0.3s ease;
+            opacity: 1;
+        }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0,0,0,0.75);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            max-width: 600px;
+            width: 100%;
+            text-align: center;
+            position: relative;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal-content img {
+            width: 100%;
+            max-height: 300px;
+            object-fit: contain;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .product-link {
+            text-decoration: none;
+            color: black;
+            font-weight: 600;
+        }
+
+        .product-link:hover {
+            text-decoration: none;
+            color: black;
+            font-weight: 600;
+            transition: all 0.15s ease;
+            font-size: 19px;
+        }
 
     </style>
 
+{% endblock %}
+
+{% block javascripts %}
+<script>
+    function showModalFromData(imageUrl, title, price, description) {
+        document.getElementById('modalImage').src = imageUrl;
+        document.getElementById('modalTitle').innerText = title;
+        document.getElementById('modalPrice').innerText = 'Cena: $' + price;
+        document.getElementById('modalDescription').innerText = description || 'Brak opisu';
+        document.getElementById('productModal').style.display = 'flex';
+    }
+
+    function hideModal() {
+    document.getElementById('productModal').style.display = 'none';
+    }
+</script>
 {% endblock %}
 
 {% block body %}
@@ -207,12 +337,21 @@
             <div class="product-cards" style="flex: 1; display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem;">
                 {% for product in products %}
                     <div class="product-card">
-                        <div class="product-name">{{ product.brand }} {{ product.model }}</div>
-                        {% if product.imageUrl %}
-                            <img src="{{ asset(product.imageUrl) }}" alt="{{ product.brand }} {{ product.model }}">
-                        {% else %}
-                            <img src="{{ asset('images/defaultImage.png') }}" alt="Default Product Image">
-                        {% endif %}
+                        <div class="product-name"><a class="product-link" href="products/{{ product.id }}">{{ product.brand }} {{ product.model }}</a></div>
+                        <div class="product-image-wrapper"  onclick="showModalFromData('{{ asset(product.imageUrl ?: 'images/defaultImage.png') }}',
+                                '{{ product.brand }} {{ product.model|e('js') }}',
+                                '{{ product.price }}',
+                                '{{ product.description|e('js') }}')">
+                            {% if product.imageUrl %}
+                                <img class="product-img" src="{{ asset(product.imageUrl) }}" alt="{{ product.brand }} {{ product.model }}">
+                            {% else %}
+                                <img class="product-img" src="{{ asset('images/defaultImage.png') }}" alt="Default Product Image">
+                            {% endif %}
+                            <div class="image-overlay">
+                                <i class="mdi mdi-eye-outline"></i>
+                                <span>Preview</span>
+                            </div>
+                        </div>
                         {% if product.colors %}
                             <div class="product-colors">
                                 {% for color in product.colors %}
@@ -235,4 +374,13 @@
             </div>
         </div>
     </section>
+    <div id="productModal" class="modal-overlay" style="display: none;">
+        <div class="modal-content">
+            <span class="modal-close" onclick="hideModal()">&times;</span>
+            <img id="modalImage" src="" alt="Product image">
+            <h3 id="modalTitle"></h3>
+            <p id="modalPrice" style="font-weight: bold;"></p>
+            <p id="modalDescription"></p>
+        </div>
+    </div>
 {% endblock %}

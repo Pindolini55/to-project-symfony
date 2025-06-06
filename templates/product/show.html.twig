@@ -1,39 +1,150 @@
-{# templates/product/show.html.twig #}
 {% extends 'base.html.twig' %}
 
-{% block title %}{{ product.name }}{% endblock %}
+{% block title %}{{ product.brand }} {{ product.model }}{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .product-show-section {
+            max-width: 80%;
+            height: 100%;
+            margin: 0 auto;
+            padding: 3rem 2rem;
+        }
+
+        .product-details-wrapper {
+            display: flex;
+            gap: 3rem;
+            align-items: flex-start;
+            background-color: #f9f9f9;
+            padding: 2rem;
+            border-radius: 15px;
+        }
+
+        .product-image {
+            flex: 1;
+        }
+
+        .product-image img {
+            width: 100%;
+            border-radius: 15px;
+            transition: transform 0.3s ease;
+        }
+
+        .product-image img:hover {
+            transform: scale(1.03);
+        }
+
+        .product-info {
+            flex: 1.5;
+        }
+
+        .product-info h2 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+        }
+
+        .product-info .price {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #023430;
+            margin: 1rem 0;
+        }
+
+        .product-info .rating {
+            color: #FFB400;
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+
+        .product-info .description {
+            margin: 1.5rem 0;
+            line-height: 1.6;
+        }
+
+        .product-colors, .product-sizes {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .product-color, .product-size {
+            width: 25px;
+            height: 25px;
+            border-radius: 3px;
+            border: 1px solid #ccc;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            font-weight: bold;
+            padding: 0.5rem;
+        }
+
+
+        .add-to-cart-btn {
+            background-color: #f1f1f1;
+            color: black;
+            border: 2px solid black;
+            padding: 0.5rem 1rem;
+            font-size: 1rem;
+            border-radius: 55px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.25s ease;
+        }
+
+        .add-to-cart-btn:hover {
+            background-color: #dcdcdc;
+            transform: scale(1.05);
+        }
+    </style>
+{% endblock %}
 
 {% block body %}
-    <section class="py-5">
-        <div class="container">
-            {% if product is not empty %}
-                <div class="row">
-                    <div class="col-md-6">
-                        <img src="{{ product.imageUrl }}" alt="{{ product.name }}" class="img-fluid mb-3">
-                    </div>
-                    <div class="col-md-6">
-                        <h1>{{ product.name }}</h1>
-                        <p class="text-muted">Cena: <strong>{{ product.price }} PLN</strong></p>
-                        <p>Ocena: {{ product.rating|default(4.5) }}★</p>
-                        <p>Opis: {{ product.description }}</p>
-                        <button id="add-to-cart-btn" class="btn btn-success">Dodaj do koszyka</button>
-                    </div>
+    <section class="product-show-section" style="margin-bottom: 10%">
+        <div class="product-details-wrapper">
+            <div class="product-image">
+                <img src="{{ asset(product.imageUrl ?: 'images/defaultImage.png') }}" alt="{{ product.brand }} {{ product.model }}">
+            </div>
+            <div class="product-info">
+                <h2>{{ product.brand }} {{ product.model }}</h2>
+                <div class="rating">
+                    <i class="mdi mdi-star"></i> {{ product.rating }}
                 </div>
-            {% else %}
-                <p>Produkt nie istnieje.</p>
-            {% endif %}
+                <div class="price">${{ product.price }}</div>
+                <div class="description">{{ product.description ?: 'Brak opisu dla tego produktu.' }}</div>
+
+                {% if product.colors %}
+                    <div>
+                        <strong>Kolory:</strong>
+                        <div class="product-colors">
+                            {% for color in product.colors %}
+                                <div class="product-color" style="background-color: {{ color }}">&nbsp;</div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                {% endif %}
+
+                {% if product.sizes %}
+                    <div>
+                        <strong>Rozmiary:</strong>
+                        <div class="product-sizes">
+                            {% for size in product.sizes %}
+                                <div class="product-size">{{ size }}</div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                {% endif %}
+
+                <button class="add-to-cart-btn"
+                        data-product-id="{{ product.id }}"
+                        data-product-name="{{ product.brand }} {{ product.model }}"
+                        data-product-price="{{ product.price }}">
+                    Dodaj do koszyka
+                </button>
+            </div>
         </div>
     </section>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const addToCartBtn = document.getElementById('add-to-cart-btn');
-            if (addToCartBtn) {
-                addToCartBtn.addEventListener('click', () => {
-                    // Tutaj w realnej aplikacji wyślesz żądanie AJAX lub przekierujesz do kontrolera koszyka
-                    alert('Produkt dodany do koszyka!');
-                });
-            }
-        });
-    </script>
 {% endblock %}

@@ -105,6 +105,28 @@ class ProductController extends AbstractController
     public function show(int $id, EntityManagerInterface $entityManager): Response
     {
         $product = $entityManager->getRepository(Product::class)->find($id);
+        $qb = $entityManager->createQueryBuilder()
+            ->select('po.id, po.value, po.description, p.id as idProduct')
+            ->from(ProductOpinion::class, 'po')
+            ->leftJoin('po.idProduct', 'p')
+            ->where('p.id = ' . $id)
+        ;
+        $query = $qb->getQuery();
+        $productOpinions = $query->getResult();
+
+        $product->averageRating = 0;
+        $product->averageRatingSum = 0;
+        $product->opinionsCount = 0;
+        foreach ($productOpinions as $opinion) {
+            $product->averageRating += $opinion['value'];
+            $product->opinionsCount++;
+        }
+        if ($product->opinionsCount > 0) {
+            $product->rating = number_format($product->averageRating / $product->opinionsCount, 1, '.', '') . ' (' . $product->opinionsCount . ')';
+            $product->averageRatingSum = $product->averageRating / $product->opinionsCount;
+        } else {
+            $product->rating = '0 (0)';
+        }
 
         return $this->render('product/show.html.twig', [
             'product' => $product

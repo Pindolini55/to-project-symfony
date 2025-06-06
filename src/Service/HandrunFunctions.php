@@ -94,7 +94,7 @@ class HandrunFunctions
             'Łatwe w czyszczeniu i odporne na zabrudzenia.',
         );
 
-
+        $batchSize = 15;
         for ($i = 1; $i <= $numberOfProducts; $i++) {
             $randBrands = rand(0, 26);
             $randModels = rand(0, 126);
@@ -127,6 +127,14 @@ class HandrunFunctions
             $this->entityManager->persist($product);
             if ($withOpinions) {
                 $this->addProductsOpinions($product, $opinionsArray);
+            }
+            if ($i % $batchSize === 0) {
+                try {
+                    $this->entityManager->flush();
+                    $this->entityManager->clear();
+                } catch (Exception $exception) {
+                    dump($exception->getMessage());
+                }
             }
         }
 
