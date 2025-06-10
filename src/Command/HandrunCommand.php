@@ -7,6 +7,7 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Stopwatch\Stopwatch;
+use DateTime;
 
 class HandrunCommand extends Command
 {
@@ -26,11 +27,11 @@ class HandrunCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $output->writeln('<info>Rozpoczęcie operacji ręcznych...</info>');
+        $output->writeln('<info>Rozpoczęcie operacji ręcznych... (' . (new DateTime())->format('Y-m-d H:i:s') . ') </info>');
         $stopwatch = new Stopwatch();
         $stopwatch->start('handrun_execution');
 //        $this->handrunFunctions->addProductColors($output);
-        $this->handrunFunctions->addProducts($output, 18,true);
+        $this->handrunFunctions->addProducts($output, 1000,true);
         $event = $stopwatch->stop('handrun_execution');
         $durationMs = $event->getDuration(); // czas w milisekundach
         $totalSeconds = (int) floor($durationMs / 1000);
@@ -46,7 +47,7 @@ class HandrunCommand extends Command
             $memoryUsage / 1024 / 1024
         ));
 
-        $output->writeln('<info>Zakończono.</info>');
+        $output->writeln('<info>Zakończono (' . (new DateTime())->format('Y-m-d H:i:s') . ') </info>');
 
         return Command::SUCCESS;
     }

@@ -1,0 +1,82 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}About Symfony Shop{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .about-section {
+            max-width: 80%;
+            margin: 0 auto;
+            padding: 3rem 2rem;
+            line-height: 1.8;
+        }
+
+        .about-title {
+            font-size: 2.2rem;
+            font-weight: bold;
+            margin-bottom: 1.5rem;
+        }
+
+        .about-subtitle {
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .highlight {
+            color: #023430;
+            font-weight: bold;
+        }
+
+        .about-img {
+            width: 100%;
+            max-height: 350px;
+            object-fit: cover;
+            border-radius: 15px;
+            margin-top: 2rem;
+            margin-bottom: 2rem;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+    <section class="about-section">
+        <h1 class="about-title">About Symfony Shop</h1>
+
+        <p>
+            Welcome to <span class="highlight">Symfony Shop</span> — your trusted online destination for high-quality and stylish shoes for every step of life.
+            Founded in <strong>2019</strong>, our mission has always been to combine technology and fashion by providing a seamless and modern shopping experience for shoe lovers across the globe.
+        </p>
+
+        <img class="about-img" src="{{ asset('images/about_banner.jpg') }}" alt="About Symfony Shop">
+
+        <h2 class="about-subtitle">Where It All Began</h2>
+        <p>
+            Symfony Shop started as a small idea in a university dorm, where a group of tech-obsessed friends realized that the online shoe shopping experience was outdated, clunky, and uninspiring.
+            With a background in software development and a shared love for sneakers, they launched Symfony Shop — a fast, responsive, and customer-focused platform built entirely with Symfony and passion.
+        </p>
+
+        <h2 class="about-subtitle">Our Philosophy</h2>
+        <p>
+            We believe shoes are more than just accessories — they are a statement, a necessity, and a story.
+            That's why our collection ranges from classic everyday sneakers to performance shoes and unique limited-edition drops.
+            At Symfony Shop, quality, comfort, and design walk hand in hand.
+        </p>
+
+        <h2 class="about-subtitle">What Makes Us Different?</h2>
+        <ul>
+            <li><strong>Fast & Secure</strong> – built on modern technologies to deliver blazing speed and secure transactions.</li>
+            <li><strong>User First</strong> – intuitive UI, clean design, and helpful features like wishlists, filters, and real-time previews.</li>
+            <li><strong>Curated Inventory</strong> – every product is selected by passionate people who live and breathe shoes.</li>
+            <li><strong>Community Driven</strong> – we listen to your feedback and improve constantly.</li>
+        </ul>
+
+        <h2 class="about-subtitle">Join Our Journey</h2>
+        <p>
+            Whether you're running marathons, walking city streets, or styling your weekend fit — <span class="highlight">Symfony Shop</span> is here to support you from the ground up.
+            We're not just a store — we're a movement.
+        </p>
+    </section>
+{% endblock %}

@@ -1,43 +1,147 @@
-{# templates/cart/show.html.twig #}
 {% extends 'base.html.twig' %}
 
 {% block title %}Twój koszyk{% endblock %}
 
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .cart-section {
+            max-width: 80%;
+            margin: 0 auto;
+            padding: 3rem 2rem;
+        }
+
+        .cart-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 2rem;
+        }
+
+        .cart-table th,
+        .cart-table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #ccc;
+        }
+
+        .cart-table th {
+            background-color: #f4f4f4;
+        }
+
+        .cart-remove-btn {
+            background-color: #e74c3c;
+            color: white;
+            border: none;
+            padding: 0.4rem 0.8rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        .cart-remove-btn:hover {
+            background-color: #c0392b;
+        }
+
+        .cart-total {
+            font-size: 1.5rem;
+            font-weight: bold;
+            text-align: right;
+            margin-top: 1rem;
+        }
+
+        .empty-cart {
+            font-size: 1.3rem;
+            text-align: center;
+            color: #555;
+            margin-top: 3rem;
+        }
+    </style>
+{% endblock %}
+
 {% block body %}
-    <h1>Koszyk</h1>
-    {% if cartItems is empty %}
-        <p>Koszyk jest pusty.</p>
-    {% else %}
-        <table class="table">
+    <section class="cart-section">
+        <h2>Your Cart</h2>
+
+        <table class="cart-table" id="cartTable" style="display: none;">
             <thead>
             <tr>
-                <th>Produkt</th>
-                <th>Cena</th>
-                <th>Ilość</th>
-                <th>Razem</th>
+                <th>Product</th>
+                <th>Price</th>
+                <th></th>
             </tr>
             </thead>
-            <tbody>
-            {% set total = 0 %}
-            {% for item in cartItems %}
-                {% set itemTotal = item.price * item.quantity %}
-                {% set total = total + itemTotal %}
-                <tr>
-                    <td>{{ item.name }}</td>
-                    <td>{{ item.price }} PLN</td>
-                    <td>{{ item.quantity }}</td>
-                    <td>{{ itemTotal }} PLN</td>
-                </tr>
-            {% endfor %}
+            <tbody id="cartBody">
             </tbody>
-            <tfoot>
-            <tr>
-                <td colspan="3" class="text-end"><strong>Suma:</strong></td>
-                <td><strong>{{ total }} PLN</strong></td>
-            </tr>
-            </tfoot>
         </table>
-    {% endif %}
 
-    <button class="btn btn-primary">Przejdź do zamówienia</button>
+        <div class="cart-total" id="cartTotal" style="display: none;">Sum: $0</div>
+        <div class="empty-cart" id="emptyCart">Cart is empty.</div>
+    </section>
+{% endblock %}
+
+{% block javascripts %}
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const cart = JSON.parse(localStorage.getItem('cart')) || [];
+            const cartTable = document.getElementById('cartTable');
+            const cartBody = document.getElementById('cartBody');
+            const cartTotal = document.getElementById('cartTotal');
+            const emptyCart = document.getElementById('emptyCart');
+
+            function renderCart() {
+                cartBody.innerHTML = '';
+                let total = 0;
+
+                if (cart.length === 0) {
+                    cartTable.style.display = 'none';
+                    cartTotal.style.display = 'none';
+                    emptyCart.style.display = 'block';
+                    return;
+                }
+
+                cart.forEach((item, index) => {
+                    const row = document.createElement('tr');
+
+                    const nameCell = document.createElement('td');
+                    nameCell.textContent = item.name;
+
+                    const priceCell = document.createElement('td');
+                    priceCell.textContent = `$${parseFloat(item.price).toFixed(2)}`;
+                    total += parseFloat(item.price);
+
+                    const actionCell = document.createElement('td');
+                    const removeBtn = document.createElement('button');
+                    removeBtn.className = 'cart-remove-btn';
+                    removeBtn.textContent = 'Delete';
+                    removeBtn.onclick = () => {
+                        cart.splice(index, 1);
+                        localStorage.setItem('cart', JSON.stringify(cart));
+                        renderCart();
+                        updateCartCount();
+                    };
+
+                    actionCell.appendChild(removeBtn);
+                    row.appendChild(nameCell);
+                    row.appendChild(priceCell);
+                    row.appendChild(actionCell);
+                    cartBody.appendChild(row);
+                });
+
+                cartTable.style.display = 'table';
+                cartTotal.style.display = 'block';
+                cartTotal.textContent = `Sum: $${total.toFixed(2)}`;
+                emptyCart.style.display = 'none';
+            }
+
+            function updateCartCount() {
+                const badge = document.getElementById('cart-count');
+                if (badge) {
+                    badge.textContent = cart.length;
+                }
+            }
+
+            renderCart();
+            updateCartCount();
+        });
+    </script>
 {% endblock %}

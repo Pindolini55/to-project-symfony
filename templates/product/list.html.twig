@@ -91,19 +91,6 @@
             margin-top: 0.6rem;
             margin-left: 1.05rem;
         }
-        .add-to-cart-btn {
-            background-color: #f1f1f1;
-            color: black;
-            border: 2px solid black;
-            padding: 0.20rem 0.6rem;
-            margin-top: 0.35rem;
-            font-size: 0.9rem;
-            border-radius: 55px;
-            cursor: pointer;
-            font-weight: bold;
-            margin-left: auto;
-            margin-right: 0.5rem;
-        }
         input[type="checkbox"] {
             accent-color: #023430;
             width: 22px;
@@ -255,11 +242,56 @@
 
 {% block javascripts %}
 <script>
-    function showModalFromData(imageUrl, title, price, description) {
+    document.addEventListener('DOMContentLoaded', function () {
+        const cartCount = document.getElementById('cart-count');
+        const addToCartButtons = document.querySelectorAll('.add-to-cart-btn');
+
+        function getCart() {
+            const cart = localStorage.getItem('cart');
+            return cart ? JSON.parse(cart) : [];
+        }
+
+        function saveCart(cart) {
+            localStorage.setItem('cart', JSON.stringify(cart));
+        }
+
+        function updateCartCount() {
+            const cart = getCart();
+            cartCount.textContent = cart.length;
+        }
+
+        addToCartButtons.forEach(button => {
+            button.addEventListener('click', function () {
+                const productId = this.dataset.productId;
+                const productName = this.dataset.productName;
+                const productPrice = this.dataset.productPrice;
+
+                let cart = getCart();
+
+                if (cart.some(item => item.id === productId)) {
+                    showSnackbar('Product already in cart!', true);
+                    return;
+                }
+                cart.push({
+                    id: productId,
+                    name: productName,
+                    price: productPrice
+                });
+                saveCart(cart);
+                updateCartCount();
+                showSnackbar(`Product ${productName} was added to cart!`);
+            });
+        });
+
+        updateCartCount();
+    });
+
+    function showModalFromData(imageUrl, title, price, description, sizes) {
         document.getElementById('modalImage').src = imageUrl;
         document.getElementById('modalTitle').innerText = title;
-        document.getElementById('modalPrice').innerText = 'Cena: $' + price;
-        document.getElementById('modalDescription').innerText = description || 'Brak opisu';
+        document.getElementById('modalPrice').innerText = 'Price: $' + price;
+        document.getElementById('modalDescription').innerText = description || 'No description';
+        document.getElementById('modalSizes').innerText =  sizes ? 'Available Sizes: ' + sizes : 'No sizes available';
         document.getElementById('productModal').style.display = 'flex';
     }
 
@@ -279,7 +311,7 @@
                     <option value="">-- wybierz --</option>
                     <option value="price_asc" {{ app.request.get('sort') == 'price_asc' ? 'selected' : '' }}>Cena rosnąco</option>
                     <option value="price_desc" {{ app.request.get('sort') == 'price_desc' ? 'selected' : '' }}>Cena malejąco</option>
-                    <option value="popular_desc" {{ app.request.get('sort') == 'rating_desc' ? 'selected' : '' }}>Popularność</option>
+                    <option value="popular_desc" {{ app.request.get('sort') == 'popular_desc' ? 'selected' : '' }}>Popularność</option>
                     <option value="rating_desc" {{ app.request.get('sort') == 'rating_desc' ? 'selected' : '' }}>Najwyższa ocena</option>
                 </select>
                 <button type="submit" class="btn btn-dark">Sortuj</button>
@@ -341,7 +373,9 @@
                         <div class="product-image-wrapper"  onclick="showModalFromData('{{ asset(product.imageUrl ?: 'images/defaultImage.png') }}',
                                 '{{ product.brand }} {{ product.model|e('js') }}',
                                 '{{ product.price }}',
-                                '{{ product.description|e('js') }}')">
+                                '{{ product.description|e('js') }}',
+                                '{{ product.sizes|join(', ')|e('js') }}',
+                                )">
                             {% if product.imageUrl %}
                                 <img class="product-img" src="{{ asset(product.imageUrl) }}" alt="{{ product.brand }} {{ product.model }}">
                             {% else %}
@@ -349,7 +383,7 @@
                             {% endif %}
                             <div class="image-overlay">
                                 <i class="mdi mdi-eye-outline"></i>
-                                <span>Preview</span>
+                                <span>Quick Preview</span>
                             </div>
                         </div>
                         {% if product.colors %}
@@ -379,8 +413,10 @@
             <span class="modal-close" onclick="hideModal()">&times;</span>
             <img id="modalImage" src="" alt="Product image">
             <h3 id="modalTitle"></h3>
+            <p id="modalSizes" style="font-style: italic;"></p>
             <p id="modalPrice" style="font-weight: bold;"></p>
             <p id="modalDescription"></p>
         </div>
     </div>
 {% endblock %}
+

@@ -148,3 +148,51 @@
         </div>
     </section>
 {% endblock %}
+
+{% block javascripts %}
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const cartCount = document.getElementById('cart-count');
+            const addToCartButtons = document.querySelectorAll('.add-to-cart-btn');
+
+            function getCart() {
+                const cart = localStorage.getItem('cart');
+                return cart ? JSON.parse(cart) : [];
+            }
+
+            function saveCart(cart) {
+                localStorage.setItem('cart', JSON.stringify(cart));
+            }
+
+            function updateCartCount() {
+                const cart = getCart();
+                cartCount.textContent = cart.length;
+            }
+
+            addToCartButtons.forEach(button => {
+                button.addEventListener('click', function () {
+                    const productId = this.dataset.productId;
+                    const productName = this.dataset.productName;
+                    const productPrice = this.dataset.productPrice;
+
+                    let cart = getCart();
+
+                    if (cart.some(item => item.id === productId)) {
+                        showSnackbar('Product already in cart!', true);
+                        return;
+                    }
+                    cart.push({
+                        id: productId,
+                        name: productName,
+                        price: productPrice
+                    });
+                    saveCart(cart);
+                    updateCartCount();
+                    showSnackbar(`Product ${productName} was added to cart!`);
+                });
+            });
+
+            updateCartCount();
+        });
+    </script>
+{% endblock %}
