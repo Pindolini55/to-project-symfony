@@ -83,27 +83,58 @@
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const cart = JSON.parse(localStorage.getItem('cart')) || [];
+            let cartData = []
             const cartTable = document.getElementById('cartTable');
             const cartBody = document.getElementById('cartBody');
             const cartTotal = document.getElementById('cartTotal');
             const emptyCart = document.getElementById('emptyCart');
 
+            fetch('{{ path('app_cart_save') }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: JSON.stringify({ cart: cart })
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    cartData = data || [];
+                    renderCart();
+                })
+                .catch(err => {
+                    console.error('Błąd zapisu koszyka:', err);
+                });
+
             function renderCart() {
                 cartBody.innerHTML = '';
                 let total = 0;
 
-                if (cart.length === 0) {
+                if (cartData.length === 0) {
                     cartTable.style.display = 'none';
                     cartTotal.style.display = 'none';
                     emptyCart.style.display = 'block';
                     return;
                 }
 
-                cart.forEach((item, index) => {
+                cartData.forEach((item, index) => {
                     const row = document.createElement('tr');
-
                     const nameCell = document.createElement('td');
-                    nameCell.textContent = item.name;
+                    const img = document.createElement('img');
+                    img.src = item.imageUrl || '{{ asset('images/defaultImage.png') }}';
+                    img.alt = item.name;
+                    img.style.width = '125px';
+                    img.style.height = '85px';
+                    nameCell.appendChild(img);
+                    const nameText = document.createElement('span');
+                    nameText.style.marginLeft = '10px';
+                    nameText.innerHTML = `<a href="/products/${item.id}">${item.brand} ${item.model}`;
+                    nameCell.appendChild(nameText);
 
                     const priceCell = document.createElement('td');
                     priceCell.textContent = `$${parseFloat(item.price).toFixed(2)}`;
@@ -114,8 +145,10 @@
                     removeBtn.className = 'cart-remove-btn';
                     removeBtn.textContent = 'Delete';
                     removeBtn.onclick = () => {
-                        cart.splice(index, 1);
+                        let findIndex = cart.findIndex(cartItem => cartItem.id == item.id);
+                        cart.splice(findIndex, 1);
                         localStorage.setItem('cart', JSON.stringify(cart));
+                        cartData.splice(index, 1);
                         renderCart();
                         updateCartCount();
                     };
@@ -140,7 +173,6 @@
                 }
             }
 
-            renderCart();
             updateCartCount();
         });
     </script>

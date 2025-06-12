@@ -57,26 +57,21 @@ class ProductController extends AbstractController
         }
         $query = $qb->getQuery();
         $products = $query->getResult();
-
-        $qb = $entityManager->createQueryBuilder()
-            ->select('po.id, po.value, po.description, p.id as idProduct')
-            ->from(ProductOpinion::class, 'po')
-            ->leftJoin('po.idProduct', 'p')
-        ;
-        $query = $qb->getQuery();
-        $productsOpinions = $query->getResult();
-
-
         foreach ($products as $key => $product) {
             $products[$key]['averageRating'] = 0;
             $products[$key]['averageRatingSum'] = 0;
-            $products[$key]['opinionsCount'] = 0;
-            foreach ($productsOpinions as $opinion) {
-                if ($product['id'] == $opinion['idProduct']) {
-                    $products[$key]['averageRating'] += $opinion['value'];
-                    $products[$key]['opinionsCount']++;
+            $products[$key]['opinionsCount'] = rand(0, 15);
+            if ($products[$key]['opinionsCount'] > 0) {
+                for ($i = 0; $i < $products[$key]['opinionsCount']; $i++) {
+                    $products[$key]['averageRating'] += rand(1, 5);
                 }
             }
+//            foreach ($productsOpinions as $opinion) {
+//                if ($product['id'] == $opinion['idProduct']) {
+//                    $products[$key]['averageRating'] += $opinion['value'];
+//                    $products[$key]['opinionsCount']++;
+//                }
+//            }
             if ($products[$key]['opinionsCount'] > 0) {
                 $products[$key]['rating'] = number_format($products[$key]['averageRating'] / $products[$key]['opinionsCount'], 1, '.', '') . ' (' . $products[$key]['opinionsCount'] . ')';
                 $products[$key]['averageRatingSum'] = $products[$key]['averageRating'] / $products[$key]['opinionsCount'];
@@ -86,11 +81,13 @@ class ProductController extends AbstractController
         }
         if ($sortBy === 'popular_desc') {
             usort($products, function ($a, $b) {
-                return $b['opinionsCount'] <=> $a['opinionsCount'];
+                return $b['opinionsCount'] <=> $a['opinionsCount']
+                    ?: $b['averageRatingSum'] <=> $a['averageRatingSum'];
             });
         } else if ($sortBy === 'rating_desc') {
             usort($products, function ($a, $b) {
-                return $b['averageRatingSum'] <=> $a['averageRatingSum'];
+                return $b['averageRatingSum'] <=> $a['averageRatingSum']
+                    ?: $b['opinionsCount'] <=> $a['opinionsCount'];
             });
         }
         return $this->render('product/list.html.twig', [

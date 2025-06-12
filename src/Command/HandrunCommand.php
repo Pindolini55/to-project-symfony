@@ -30,8 +30,7 @@ class HandrunCommand extends Command
         $output->writeln('<info>Rozpoczęcie operacji ręcznych... (' . (new DateTime())->format('Y-m-d H:i:s') . ') </info>');
         $stopwatch = new Stopwatch();
         $stopwatch->start('handrun_execution');
-//        $this->handrunFunctions->addProductColors($output);
-        $this->handrunFunctions->addProducts($output, 1000,true);
+        $this->handrunFunctions->addProducts($output, 13,true);
         $event = $stopwatch->stop('handrun_execution');
         $durationMs = $event->getDuration(); // czas w milisekundach
         $totalSeconds = (int) floor($durationMs / 1000);
