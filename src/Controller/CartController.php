@@ -24,9 +24,6 @@ class CartController extends AbstractController
     {
         $data = json_decode($request->getContent(), true);
         $cart = $data['cart'] ?? [];
-
-        $request->getSession()->set('cart', $cart);
-
         $idProducts = array_column($cart, 'id');
         $cartProducts = array();
         if (!empty($idProducts)) {

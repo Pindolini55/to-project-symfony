@@ -27,6 +27,7 @@ class ProductController extends AbstractController
         $qb = $entityManager->createQueryBuilder()
             ->select('p.id, p.brand, p.model, p.price, p.description, p.imageUrl, p.colors, p.sizes')
             ->from(Product::class, 'p')
+            ->setMaxResults(1200)
         ;
         if ($sortBy === 'price_asc') {
             $qb->orderBy('p.price', 'ASC');
